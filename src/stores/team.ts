@@ -31,6 +31,12 @@ export const useTeamStore = defineStore({
       );
       return !!membership?.manager;
     },
+    userMembership: (state) => {
+      const userStore = useUserStore();
+      return state.team?.members.find(
+        (elem) => elem.user.id === userStore.user?.id
+      );
+    },
   },
   actions: {
     async createTeam(name: string) {

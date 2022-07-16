@@ -20,6 +20,7 @@ const rules = {
 const v$ = useVuelidate(rules, state);
 
 async function submit(): Promise<void> {
+  if (v$.value.$invalid) return;
   if (!teamStore.team) return;
   try {
     await teamStore.addPost(teamStore.team.id, state.value.content);
@@ -40,6 +41,7 @@ async function submit(): Promise<void> {
       class="flex-1"
       v-model:value="state.content"
       @blur="v$.content.$touch()"
+      @keyup.enter="submit"
     />
     <ButtonIcon
       class="bg-primary text-primary-contrast"

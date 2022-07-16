@@ -12,6 +12,10 @@ const props = defineProps<{
 const classname = computed(() =>
   props.error ? "border-b-error" : "focus:border-b-primary"
 );
+
+function toto() {
+  console.log("pouet");
+}
 </script>
 
 <template>
@@ -25,7 +29,6 @@ const classname = computed(() =>
       class="outline-0 border-b border-b-gray-400 transition w-full py-1"
       :class="classname"
       @blur="$emit('blur')"
-      @change="$emit('change')"
     />
     <span v-if="props.error" class="block text-sm text-error">{{
       props.error

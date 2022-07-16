@@ -52,6 +52,7 @@ function closeModal() {
 }
 
 async function addMember() {
+  if (v$.value.$invalid) return;
   if (!teamStore.team || !userToAdd.value) return;
   loading.value = true;
   try {
@@ -80,6 +81,7 @@ async function addMember() {
       v-model:value="state.name"
       @blur="v$.name.$touch()"
       placeholder="Nom ou email"
+      @keyup.enter="submit"
     />
     <ButtonIcon
       class="bg-primary text-primary-contrast"

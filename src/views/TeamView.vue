@@ -7,10 +7,37 @@ import Posts from "@/components/team/Posts.vue";
 import PostCreate from "@/components/post/PostCreate.vue";
 import Members from "@/components/member/Members.vue";
 import FindMember from "@/components/member/FindMember.vue";
+import { useUserStore } from "@/stores/user";
+import { ApiConsumer } from "@/services/ApiConsumer";
+import router from "@/router";
+import { eventBus } from "@/services/eventBus";
+import { errorHelper } from "@/helpers/errorHelper";
 
 const teamStore = useTeamStore();
+const userStore = useUserStore();
 
 const showSetting = ref(false);
+
+const isModalOpen = ref(false);
+function closeModale() {
+  isModalOpen.value = false;
+}
+const loading = ref(false);
+
+async function leaveTeam() {
+  loading.value = true;
+  if (!teamStore.userMembership?.id) return;
+  try {
+    await teamStore.deleteMember(teamStore.userMembership.id);
+    await userStore.refreshUser();
+    router.push("/");
+  } catch (e) {
+    eventBus.$emit("show-snackbar", {
+      text: errorHelper.formatMessage(e),
+      type: "error",
+    });
+  }
+}
 </script>
 
 <template>
@@ -45,7 +72,7 @@ const showSetting = ref(false);
       v-else-if="teamStore.team"
       class="grid gap-4 grid-cols-1 lg:grid-cols-2"
     >
-      <div>
+      <div v-if="teamStore.isUserManager">
         <Accordion title="Partager">
           <div class="p-3">
             <FindMember />
@@ -80,6 +107,24 @@ const showSetting = ref(false);
           </div>
         </Accordion>
       </div>
+
+      <div v-if="!teamStore.isUserManager">
+        <Accordion title="Quitter le groupe">
+          <div class="p-3 flex justify-center">
+            <Button @click="isModalOpen = true">Quitter le groupe ?</Button>
+          </div>
+        </Accordion>
+      </div>
     </div>
   </div>
+
+  <Modal :onClose="closeModale" :isOpen="isModalOpen">
+    <div class="w-56">
+      <p>Ne plus suivre cette liste ?</p>
+      <div class="mt-6 flex justify-between">
+        <Button @click="closeModale">Annuler</Button>
+        <Button @click="leaveTeam">Valider</Button>
+      </div>
+    </div>
+  </Modal>
 </template>

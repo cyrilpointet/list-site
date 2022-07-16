@@ -49,7 +49,7 @@ class ApiConsumer {
     });
   }
 
-  put(url: string, value: Record<string, unknown>) {
+  put(url: string, value?: Record<string, unknown>) {
     return new Promise((resolve, reject) => {
       axios
         .put(BASE_URL + url, value, { headers: this.headers })

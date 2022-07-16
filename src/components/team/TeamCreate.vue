@@ -10,6 +10,7 @@ import router from "@/router";
 
 const teamStore = useTeamStore();
 
+const loading = ref(false);
 const errorMsg: Ref<string | null> = ref(null);
 const state = ref({
   name: "",
@@ -22,6 +23,7 @@ const rules = {
 const v$ = useVuelidate(rules, state);
 
 async function submit(): Promise<void> {
+  loading.value = true;
   errorMsg.value = null;
   try {
     const teamId = await teamStore.createTeam(state.value.name);
@@ -32,6 +34,7 @@ async function submit(): Promise<void> {
         e.response?.status === 401 ? ERROR_MSG.badId : ERROR_MSG.default;
     }
   }
+  loading.value = false;
 }
 </script>
 
@@ -51,6 +54,7 @@ async function submit(): Promise<void> {
         :disabled="v$.$invalid"
         @click="submit"
         icon="add"
+        :loading="loading"
       />
     </div>
   </div>

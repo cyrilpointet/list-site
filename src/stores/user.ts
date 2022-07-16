@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
 import { ApiConsumer } from "@/services/ApiConsumer";
-import type { User, UserMembership } from "@/stores/storeTypes";
+import type { User, UserInvitation, UserMembership } from "@/stores/storeTypes";
 
 interface StoreUser extends User {
   membership: UserMembership[];
+  invitations: UserInvitation[];
 }
 
 type UserRootState = {
@@ -20,6 +21,10 @@ export const useUserStore = defineStore({
     isLogged: (state) => state.user !== null,
   },
   actions: {
+    async refreshUser() {
+      const user = (await ApiConsumer.get("user/self")) as StoreUser;
+      this.user = user;
+    },
     async autoLogin() {
       if (this.user) return;
       try {

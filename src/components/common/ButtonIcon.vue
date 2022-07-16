@@ -5,19 +5,26 @@ const props = defineProps<{
   disabled?: boolean;
   icon: string;
   size?: "xs" | "sm" | "base" | "lg" | "xl";
+  loading?: boolean;
 }>();
 
-const classnames = computed((): string =>
+const buttonClassnames = computed((): string =>
   props.disabled ? "!text-gray-400 !bg-gray-200" : ""
+);
+const iconClassnames = computed(
+  (): string =>
+    `${props.loading ? "animate-spin" : ""} ${
+      props.size ? `text-${props.size}` : ""
+    }`
 );
 </script>
 
 <template>
   <button
-    class="flex items-center justify-center rounded-full p-2 hover:shadow-xl transition aspect-square"
-    :class="classnames"
-    :disabled="disabled"
+    class="flex items-center justify-center rounded-full p-2 hover:shadow-lg transition aspect-square"
+    :class="buttonClassnames"
+    :disabled="disabled || loading"
   >
-    <Icon :type="icon" :class="size ? `text-${size}` : ''" />
+    <Icon :type="loading ? 'autorenew' : icon" :class="iconClassnames" />
   </button>
 </template>

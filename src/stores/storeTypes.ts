@@ -20,10 +20,22 @@ export interface Team {
   updatedAt: string;
 }
 
+export interface Invitation {
+  id: string;
+  fromTeam: boolean;
+  createdAt: string;
+  updatedAt: string;
+  email: string;
+}
+
 export interface TeamMember extends Membership {
   user: User;
 }
 
 export interface UserMembership extends Membership {
+  team: Team;
+}
+
+export interface UserInvitation extends Invitation {
   team: Team;
 }
