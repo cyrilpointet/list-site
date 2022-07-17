@@ -7,8 +7,8 @@ import Posts from "@/components/team/Posts.vue";
 import PostCreate from "@/components/post/PostCreate.vue";
 import Members from "@/components/member/Members.vue";
 import FindMember from "@/components/member/FindMember.vue";
+import TeamInvitations from "@/components/team/TeamInvitations.vue";
 import { useUserStore } from "@/stores/user";
-import { ApiConsumer } from "@/services/ApiConsumer";
 import router from "@/router";
 import { eventBus } from "@/services/eventBus";
 import { errorHelper } from "@/helpers/errorHelper";
@@ -42,7 +42,7 @@ async function leaveTeam() {
 
 <template>
   <div
-    class="container mx-auto mt-6 px-4 md:px-0 flex-1 flex flex-col gap-6 overflow-hidden"
+    class="container mx-auto pt-6 px-4 md:px-0 flex-1 flex flex-col gap-6 overflow-hidden"
   >
     <div class="flex justify-between md:justify-start items-center gap-8">
       <div
@@ -52,11 +52,19 @@ async function leaveTeam() {
           {{ teamStore.team?.name }}
         </h1>
       </div>
-      <ButtonIcon
-        class="bg-primary text-primary-contrast shadow"
-        @click="showSetting = !showSetting"
-        :icon="showSetting ? 'list' : 'settings'"
-      />
+      <Badge
+        :value="
+          teamStore.team.invitations.length > 0 && !showSetting
+            ? teamStore.team.invitations.length
+            : undefined
+        "
+      >
+        <ButtonIcon
+          class="bg-primary text-primary-contrast shadow"
+          @click="showSetting = !showSetting"
+          :icon="showSetting ? 'list' : 'settings'"
+        />
+      </Badge>
     </div>
 
     <template v-if="!showSetting">
@@ -72,6 +80,18 @@ async function leaveTeam() {
       v-else-if="teamStore.team"
       class="grid gap-4 grid-cols-1 lg:grid-cols-2"
     >
+      <div
+        v-if="teamStore.isUserManager && teamStore.team.invitations.length > 0"
+      >
+        <Accordion
+          title="Demande d'adhésion en cours"
+          :number="teamStore.team.invitations.length"
+        >
+          <div class="p-3">
+            <TeamInvitations />
+          </div>
+        </Accordion>
+      </div>
       <div v-if="teamStore.isUserManager">
         <Accordion title="Partager">
           <div class="p-3">
@@ -109,9 +129,9 @@ async function leaveTeam() {
       </div>
 
       <div v-if="!teamStore.isUserManager">
-        <Accordion title="Quitter le groupe">
+        <Accordion title="Quitter la liste">
           <div class="p-3 flex justify-center">
-            <Button @click="isModalOpen = true">Quitter le groupe ?</Button>
+            <Button @click="isModalOpen = true">Quitter la liste ?</Button>
           </div>
         </Accordion>
       </div>

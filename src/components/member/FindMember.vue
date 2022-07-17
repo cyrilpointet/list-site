@@ -25,6 +25,7 @@ const rules = {
 const v$ = useVuelidate(rules, state);
 
 async function submit() {
+  if (v$.value.$invalid) return;
   loading.value = true;
   users.value = null;
   try {
@@ -51,17 +52,17 @@ function closeModal() {
   userToAdd.value = null;
 }
 
-async function addMember() {
-  if (v$.value.$invalid) return;
+async function inviteUser() {
   if (!teamStore.team || !userToAdd.value) return;
   loading.value = true;
   try {
-    await teamStore.addMember(teamStore.team.id, userToAdd.value.id);
-    userToAdd.value = null;
-    users.value = null;
+    await ApiConsumer.post("invitation/user", {
+      teamId: teamStore.team.id,
+      email: userToAdd.value.email,
+    });
     eventBus.$emit("update-accordion");
     eventBus.$emit("show-snackbar", {
-      text: "Nouveau membre ajouté",
+      text: `Une invitation a été envoyée à ${userToAdd.value.name}`,
     });
   } catch (e) {
     eventBus.$emit("show-snackbar", {
@@ -69,6 +70,7 @@ async function addMember() {
       type: "error",
     });
   }
+  closeModal();
   loading.value = false;
 }
 </script>
@@ -117,10 +119,10 @@ async function addMember() {
 
   <Modal :onClose="closeModal" :isOpen="userToAdd">
     <div class="w-64">
-      <p>Ajouter {{ userToAdd?.name }} aux membres ?</p>
+      <p>Inviter {{ userToAdd?.name }} à partager cette liste ?</p>
       <div class="mt-6 flex justify-between">
         <Button @click="closeModal">Annuler</Button>
-        <Button @click="addMember(userToAdd)">Valider</Button>
+        <Button @click="inviteUser()">Valider</Button>
       </div>
     </div>
   </Modal>

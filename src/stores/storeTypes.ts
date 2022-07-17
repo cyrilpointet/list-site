@@ -39,3 +39,7 @@ export interface UserMembership extends Membership {
 export interface UserInvitation extends Invitation {
   team: Team;
 }
+
+export interface TeamInvitation extends Invitation {
+  user: User;
+}

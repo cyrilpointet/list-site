@@ -13,6 +13,7 @@ import Modal from "./components/common/Modal.vue";
 import Accordion from "./components/common/Accordion.vue";
 import Switch from "./components/common/Switch.vue";
 import Snackbar from "./components/common/Snackbar.vue";
+import Badge from "./components/common/Badge.vue";
 
 import "./index.css";
 
@@ -29,5 +30,6 @@ app.component("Modal", Modal);
 app.component("Accordion", Accordion);
 app.component("Switch", Switch);
 app.component("Snackbar", Snackbar);
+app.component("Badge", Badge);
 
 app.mount("#app");

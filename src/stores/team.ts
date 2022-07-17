@@ -1,7 +1,12 @@
 import { defineStore } from "pinia";
 import { ApiConsumer } from "@/services/ApiConsumer";
 import { useUserStore } from "@/stores/user";
-import type { Team, TeamMember, UserMembership } from "@/stores/storeTypes";
+import type {
+  Team,
+  TeamInvitation,
+  TeamMember,
+  UserMembership,
+} from "@/stores/storeTypes";
 
 type Post = {
   content: string;
@@ -11,6 +16,7 @@ type Post = {
 interface StoreTeam extends Team {
   posts: Post[];
   members: TeamMember[];
+  invitations?: TeamInvitation[];
 }
 
 type TeamRootState = {
@@ -62,6 +68,11 @@ export const useTeamStore = defineStore({
     },
     async getTeam(id: string) {
       const team = (await ApiConsumer.get(`team/${id}`)) as StoreTeam;
+      this.team = team;
+    },
+    async refreshTeam() {
+      if (!this.team?.id) return;
+      const team = (await ApiConsumer.get(`team/${this.team.id}`)) as StoreTeam;
       this.team = team;
     },
     async updateTeam(values: { name: string }) {

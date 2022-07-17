@@ -22,24 +22,22 @@ function logout() {
     </div>
 
     <div class="mt-6 grid gap-4 grid-cols-1 lg:grid-cols-2">
-      <div v-if="userStore.user.invitations.length > 0" class="mt-4">
-        <Accordion title="Mes invitations en attente">
+      <div v-if="userStore.user.invitations.length > 0">
+        <Accordion
+          title="Mes invitations en attente"
+          :number="userStore.user.invitations.length"
+        >
           <UserInvitations />
         </Accordion>
       </div>
-    </div>
-    <div v-if="userStore.user.invitations.length > 0">
-      <Accordion title="Mes invitations en attente">
-        <UserInvitations />
-      </Accordion>
-    </div>
 
-    <div>
-      <Accordion title="Déconnexion">
-        <div class="p-3 flex justify-center">
-          <Button @click="logout" icon="logout">Déconnexion</Button>
-        </div>
-      </Accordion>
+      <div>
+        <Accordion title="Déconnexion">
+          <div class="p-3 flex justify-center">
+            <Button @click="logout" icon="logout">Déconnexion</Button>
+          </div>
+        </Accordion>
+      </div>
     </div>
   </div>
 </template>

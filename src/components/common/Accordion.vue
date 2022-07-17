@@ -4,6 +4,7 @@ import { eventBus } from "@/services/eventBus";
 
 const props = defineProps<{
   title: string;
+  number?: number;
 }>();
 
 const maxHeight = ref<string | null>(null);
@@ -36,7 +37,9 @@ eventBus.$on("update-accordion", () => {
       :class="{ 'rounded-b-lg': !maxHeight }"
     >
       <div class="text-primary-contrast">
-        {{ props.title }}
+        <Badge :value="number">
+          {{ props.title }}
+        </Badge>
       </div>
       <Icon
         type="expand_more"
