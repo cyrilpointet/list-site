@@ -67,75 +67,81 @@ async function leaveTeam() {
       </Badge>
     </div>
 
-    <template v-if="!showSetting">
-      <Card>
-        <PostCreate />
-      </Card>
-      <Card class="mb-6 overflow-auto">
-        <Posts class="-m-4" />
-      </Card>
-    </template>
+    <Transition name="turn" mode="out-in">
+      <div v-if="!showSetting">
+        <Card>
+          <PostCreate />
+        </Card>
+        <Card class="mb-6 overflow-auto">
+          <Posts class="-m-4" />
+        </Card>
+      </div>
 
-    <div
-      v-else-if="teamStore.team"
-      class="grid gap-4 grid-cols-1 lg:grid-cols-2"
-    >
       <div
-        v-if="teamStore.isUserManager && teamStore.team.invitations.length > 0"
+        v-else-if="teamStore.team"
+        class="grid gap-4 grid-cols-1 lg:grid-cols-2"
       >
-        <Accordion
-          title="Demande d'adhésion en cours"
-          :number="teamStore.team.invitations.length"
-        >
-          <div class="p-3">
-            <TeamInvitations />
-          </div>
-        </Accordion>
-      </div>
-      <div v-if="teamStore.isUserManager">
-        <Accordion title="Partager">
-          <div class="p-3">
-            <FindMember />
-          </div>
-        </Accordion>
-      </div>
-
-      <div>
-        <Accordion
-          :title="
-            teamStore.isUserManager ? 'Gérer les partages' : 'Liste de membres'
+        <div
+          v-if="
+            teamStore.isUserManager && teamStore.team.invitations.length > 0
           "
         >
-          <div class="p-3">
-            <Members />
-          </div>
-        </Accordion>
-      </div>
+          <Accordion
+            title="Demande d'adhésion en cours"
+            :number="teamStore.team.invitations.length"
+          >
+            <div class="p-3">
+              <TeamInvitations />
+            </div>
+          </Accordion>
+        </div>
+        <div v-if="teamStore.isUserManager">
+          <Accordion title="Partager">
+            <div class="p-3">
+              <FindMember />
+            </div>
+          </Accordion>
+        </div>
 
-      <div v-if="teamStore.isUserManager">
-        <Accordion title="Renommer">
-          <div class="p-3">
-            <TeamEdit />
-          </div>
-        </Accordion>
-      </div>
+        <div>
+          <Accordion
+            :title="
+              teamStore.isUserManager
+                ? 'Gérer les partages'
+                : 'Liste de membres'
+            "
+          >
+            <div class="p-3">
+              <Members />
+            </div>
+          </Accordion>
+        </div>
 
-      <div v-if="teamStore.isUserManager">
-        <Accordion title="Supprimer la liste">
-          <div class="p-3">
-            <TeamDelete />
-          </div>
-        </Accordion>
-      </div>
+        <div v-if="teamStore.isUserManager">
+          <Accordion title="Renommer">
+            <div class="p-3">
+              <TeamEdit />
+            </div>
+          </Accordion>
+        </div>
 
-      <div v-if="!teamStore.isUserManager">
-        <Accordion title="Quitter la liste">
-          <div class="p-3 flex justify-center">
-            <Button @click="isModalOpen = true">Quitter la liste ?</Button>
-          </div>
-        </Accordion>
+        <div v-if="teamStore.isUserManager">
+          <Accordion title="Supprimer la liste">
+            <div class="p-3">
+              <TeamDelete />
+            </div>
+          </Accordion>
+        </div>
+
+        <div v-if="!teamStore.isUserManager">
+          <Accordion title="Quitter la liste">
+            <div class="p-3 flex justify-center">
+              <Button @click="isModalOpen = true">Quitter la liste ?</Button>
+            </div>
+          </Accordion>
+        </div>
       </div>
-    </div>
+    </Transition>
   </div>
 
   <Modal :onClose="closeModale" :isOpen="isModalOpen">
