@@ -28,7 +28,7 @@ async function submit(): Promise<void> {
   try {
     await teamStore.updateTeam(state.value);
     eventBus.$emit("show-snackbar", {
-      text: "Groupe nommé",
+      text: "Liste renommée",
     });
   } catch (e) {
     eventBus.$emit("show-snackbar", {
