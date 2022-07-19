@@ -24,6 +24,21 @@ const rules = {
 };
 const v$ = useVuelidate(rules, state);
 
+const userToAdd = ref<null | User>(null);
+
+function belongsToTeam(user: User) {
+  return !!teamStore.team?.members.find((elem) => elem.user.id === user.id);
+}
+
+function isEmail(text: string) {
+  const emailRegex = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9_-]+\.[a-zA-Z0-9_]{2,4}$/;
+  return emailRegex.test(text);
+}
+
+function closeModal() {
+  userToAdd.value = null;
+}
+
 async function submit() {
   if (v$.value.$invalid) return;
   loading.value = true;
@@ -43,26 +58,19 @@ async function submit() {
   loading.value = false;
 }
 
-function belongsToTeam(user: User) {
-  return !!teamStore.team?.members.find((elem) => elem.user.id === user.id);
-}
-
-const userToAdd = ref<null | User>(null);
-function closeModal() {
-  userToAdd.value = null;
-}
-
-async function inviteUser() {
-  if (!teamStore.team || !userToAdd.value) return;
+async function inviteUser(email: string) {
+  if (!teamStore.team) return;
   loading.value = true;
   try {
     await ApiConsumer.post("invitation/user", {
       teamId: teamStore.team.id,
-      email: userToAdd.value.email,
+      email: email,
     });
     eventBus.$emit("update-accordion");
     eventBus.$emit("show-snackbar", {
-      text: `Une invitation a été envoyée à ${userToAdd.value.name}`,
+      text: `Une invitation a été envoyée à ${
+        userToAdd.value?.name ? userToAdd.value.name : email
+      }`,
     });
   } catch (e) {
     eventBus.$emit("show-snackbar", {
@@ -93,11 +101,14 @@ async function inviteUser() {
     />
   </div>
   <div v-if="users !== null" class="mt-4">
-    <div
-      v-if="users.length === 0"
-      class="px-4 py-2 flex items-center border-b last:border-0"
-    >
+    <div v-if="users.length === 0" class="px-4 py-2">
       <p class="flex-1">Aucun membre trouvé</p>
+      <div v-if="isEmail(state.name)">
+        <p>
+          Voulez-vous envoyer un email d'invitation à
+          <strong>{{ state.name }}</strong> ?
+        </p>
+      </div>
     </div>
     <div
       v-for="user in users"
@@ -122,7 +133,7 @@ async function inviteUser() {
       <p>Inviter {{ userToAdd?.name }} à partager cette liste ?</p>
       <div class="mt-6 flex justify-between">
         <Button @click="closeModal">Annuler</Button>
-        <Button @click="inviteUser()">Valider</Button>
+        <Button @click="inviteUser(userToAdd?.email)">Valider</Button>
       </div>
     </div>
   </Modal>

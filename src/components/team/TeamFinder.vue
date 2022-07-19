@@ -87,6 +87,9 @@ async function join(team: Team) {
     </div>
   </div>
   <div v-if="teams !== null" class="mt-4">
+    <div v-if="teams.length === 0">
+      <p class="flex-1">Aucune liste trouvée avec ce nom</p>
+    </div>
     <div
       v-for="team in teams"
       :key="team.id"
